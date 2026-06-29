@@ -199,10 +199,72 @@ const universes = {
 // ─── DOM REFS ──────────────────────────────────────────
 const detailModal = document.getElementById('detailModal');
 const modalBody = document.getElementById('modalBody');
+const addCharacterModal = document.getElementById('addCharacterModal');
+const addCharacterForm = document.getElementById('addCharacterForm');
 
 let currentFilters = { original: 'all', existing: 'all' };
+let currentUniverse = 'original'; // Track which universe we're adding to
+
+// ─── TAB SWITCHING ────────────────────────────────────
+
+// Main tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tab = this.dataset.tab;
+        
+        // Update active state
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Show/hide content
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(`${tab}-tab`).classList.add('active');
+        
+        // Re-render graph for the visible tab
+        setTimeout(() => renderGraph(tab), 100);
+    });
+});
+
+// Sub-tabs (Gallery/Graph)
+document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const subtab = this.dataset.subtab;
+        const parent = this.closest('.tab-content');
+        const universe = parent.id.replace('-tab', '');
+        
+        // Update active state
+        parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Show/hide content
+        parent.querySelectorAll('.sub-tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(subtab).classList.add('active');
+        
+        // Re-render graph if switching to graph view
+        if (subtab.includes('graph')) {
+            setTimeout(() => renderGraph(universe), 50);
+        }
+    });
+});
+
+// ─── FILTERS ──────────────────────────────────────────
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const universe = this.closest('.story-filters').dataset.universe;
+        const filter = this.dataset.story;
+        
+        // Update active state
+        this.closest('.story-filters').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        currentFilters[universe] = filter;
+        renderGallery(universe, filter);
+    });
+});
 
 // ─── RENDER GALLERY ──────────────────────────────────
+
 function renderGallery(universe, filter = 'all') {
     const config = universes[universe];
     const data = config.data;
@@ -252,6 +314,7 @@ function renderGallery(universe, filter = 'all') {
 }
 
 // ─── MODAL ────────────────────────────────────────────
+
 function showModal(char, mode) {
     let content = `
         <h2>${char.name}</h2>
@@ -266,7 +329,6 @@ function showModal(char, mode) {
     if (mode === 'relations' || mode === 'details') {
         const relNames = char.relationships
             .map(id => {
-                // Try to find in both datasets
                 let c = originalData.find(ch => ch.id === id);
                 if (!c) c = existingData.find(ch => ch.id === id);
                 return c ? c.name : id;
@@ -292,6 +354,79 @@ detailModal.addEventListener('click', (e) => {
     if (e.target === detailModal) detailModal.classList.remove('show');
 });
 
+// ─── ADD CHARACTER ────────────────────────────────────
+
+document.querySelectorAll('.add-character-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        currentUniverse = this.dataset.universe;
+        addCharacterModal.classList.add('show');
+        document.getElementById('addUniverse').textContent = 
+            currentUniverse === 'original' ? 'Original Lore' : 'Existing Characters';
+    });
+});
+
+document.querySelector('.add-modal-close').addEventListener('click', () => {
+    addCharacterModal.classList.remove('show');
+});
+
+addCharacterModal.addEventListener('click', (e) => {
+    if (e.target === addCharacterModal) addCharacterModal.classList.remove('show');
+});
+
+addCharacterForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('charName').value.trim();
+    const role = document.getElementById('charRole').value.trim();
+    const story = document.getElementById('charStory').value.trim();
+    const description = document.getElementById('charDescription').value.trim();
+    const relationships = document.getElementById('charRelationships').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s);
+    const background = document.getElementById('charBackground').value.trim() || 
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop';
+    
+    if (!name || !role || !story || !description) {
+        alert('Please fill in all required fields (Name, Role, Story, Description)');
+        return;
+    }
+    
+    const newChar = {
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        name,
+        role,
+        story,
+        background,
+        description,
+        relationships
+    };
+    
+    // Add to the appropriate dataset
+    const targetData = currentUniverse === 'original' ? originalData : existingData;
+    targetData.push(newChar);
+    
+    // Re-render gallery
+    renderGallery(currentUniverse, currentFilters[currentUniverse]);
+    
+    // Re-render graph
+    setTimeout(() => renderGraph(currentUniverse), 100);
+    
+    // Reset form and close modal
+    this.reset();
+    addCharacterModal.classList.remove('show');
+    
+    // Show success feedback
+    const btn = this.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+    btn.textContent = '✅ Added!';
+    btn.style.background = 'rgba(80, 200, 120, 0.3)';
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+    }, 2000);
+});
+
 // ─── GRAPH VIEW ──────────────────────────────────────
 
 function buildGraphData(data) {
@@ -299,9 +434,8 @@ function buildGraphData(data) {
     const edges = [];
     data.forEach(c => {
         c.relationships.forEach(targetId => {
-            // Check if target exists in the same dataset
             const targetExists = data.some(d => d.id === targetId);
-            if (!targetExists) return; // Skip cross-universe relations
+            if (!targetExists) return;
             
             if (!edges.some(e =>
                 (e.source === c.id && e.target === targetId) ||
@@ -324,7 +458,6 @@ function simulateLayout(nodes, edges, width, height) {
     });
 
     const iterations = 300;
-    const k = 0.08;
     const repulsion = 600;
     const attraction = 0.03;
 
@@ -363,4 +496,161 @@ function simulateLayout(nodes, edges, width, height) {
         });
 
         nodes.forEach(n => {
-            pos[n.id].x = Math.max(40, Math.min(width - 40, pos[n.id].x
+            pos[n.id].x = Math.max(40, Math.min(width - 40, pos[n.id].x));
+            pos[n.id].y = Math.max(40, Math.min(height - 40, pos[n.id].y));
+        });
+    }
+
+    return pos;
+}
+
+function renderGraph(universe) {
+    const config = universes[universe];
+    const container = document.getElementById(config.graphContainerId);
+    const svg = container.querySelector('.graph-svg');
+    
+    if (!container || !svg) return;
+    
+    const rect = container.getBoundingClientRect();
+    const width = rect.width || 800;
+    const height = rect.height || 500;
+
+    const { nodes, edges } = buildGraphData(config.data);
+    const positions = simulateLayout(nodes, edges, width, height);
+
+    let svgContent = '';
+
+    // Edges
+    edges.forEach(edge => {
+        const src = positions[edge.source];
+        const tgt = positions[edge.target];
+        if (!src || !tgt) return;
+        svgContent += `
+            <line class="edge-line" 
+                  x1="${src.x}" y1="${src.y}" 
+                  x2="${tgt.x}" y2="${tgt.y}" />
+        `;
+    });
+
+    // Nodes
+    nodes.forEach(node => {
+        const p = positions[node.id];
+        if (!p) return;
+        const isCentral = node.id === 'kaelen' || node.id === 'lyra' || 
+                         node.id === 'mira' || node.id === 'tony' || 
+                         node.id === 'steve' || node.id === 'bruce';
+        svgContent += `
+            <circle class="node-circle ${isCentral ? 'central' : ''}" 
+                    data-id="${node.id}" data-universe="${universe}"
+                    cx="${p.x}" cy="${p.y}" r="18" />
+        `;
+        if (config.showLabels) {
+            svgContent += `
+                <text x="${p.x}" y="${p.y + 30}" text-anchor="middle">${node.label}</text>
+            `;
+        }
+    });
+
+    svg.innerHTML = svgContent;
+
+    // Click node → show details
+    svg.querySelectorAll('.node-circle').forEach(circle => {
+        circle.addEventListener('click', () => {
+            const id = circle.dataset.id;
+            const universeData = universes[circle.dataset.universe].data;
+            const char = universeData.find(c => c.id === id);
+            if (char) showModal(char, 'details');
+        });
+    });
+}
+
+// ─── GRAPH INTERACTIONS ──────────────────────────────
+
+// Setup graph interactions for each universe
+Object.keys(universes).forEach(universe => {
+    const config = universes[universe];
+    const container = document.getElementById(config.graphContainerId);
+    if (!container) return;
+    
+    const svg = container.querySelector('.graph-svg');
+    
+    container.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.node-circle')) return;
+        config.isDragging = true;
+        config.dragStart = { x: e.clientX, y: e.clientY };
+        config.transformStart = { x: config.graphTransform.x, y: config.graphTransform.y };
+        svg.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!config.isDragging) return;
+        const dx = e.clientX - config.dragStart.x;
+        const dy = e.clientY - config.dragStart.y;
+        config.graphTransform.x = config.transformStart.x + dx;
+        config.graphTransform.y = config.transformStart.y + dy;
+        applyGraphTransform(universe);
+    });
+
+    window.addEventListener('mouseup', () => {
+        config.isDragging = false;
+        svg.style.cursor = 'grab';
+    });
+
+    container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        config.graphTransform.scale = Math.max(0.3, Math.min(3, config.graphTransform.scale + delta));
+        applyGraphTransform(universe);
+    });
+});
+
+function applyGraphTransform(universe) {
+    const config = universes[universe];
+    const container = document.getElementById(config.graphContainerId);
+    const svg = container.querySelector('.graph-svg');
+    svg.setAttribute('transform',
+        `translate(${config.graphTransform.x}, ${config.graphTransform.y}) scale(${config.graphTransform.scale})`
+    );
+}
+
+// ─── GRAPH CONTROLS ──────────────────────────────────
+
+document.querySelectorAll('.toggle-labels').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const universe = this.dataset.universe;
+        universes[universe].showLabels = !universes[universe].showLabels;
+        renderGraph(universe);
+    });
+});
+
+document.querySelectorAll('.reset-graph').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const universe = this.dataset.universe;
+        const config = universes[universe];
+        config.graphTransform = { x: 0, y: 0, scale: 1 };
+        applyGraphTransform(universe);
+        renderGraph(universe);
+    });
+});
+
+// ─── INIT ──────────────────────────────────────────────
+
+// Render both galleries
+renderGallery('original', 'all');
+renderGallery('existing', 'all');
+
+// Render both graphs after a delay
+setTimeout(() => {
+    renderGraph('original');
+    renderGraph('existing');
+}, 200);
+
+// Re-render graphs on resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        renderGraph('original');
+        renderGraph('existing');
+    }, 300);
+});
