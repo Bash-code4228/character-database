@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Lore Vault</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header / Navigation -->
+        <header class="app-header">
+            <h1>📜 Character Lore Vault</h1>
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="original">Original Lore</button>
+                <button class="tab-btn" data-tab="existing">Existing Characters</button>
+            </nav>
+        </header>
+
+        <!-- ORIGINAL LORE TAB -->
+        <section id="original-tab" class="tab-content active">
+            <!-- Sub-navigation for Original -->
+            <div class="sub-nav">
+                <button class="sub-tab-btn active" data-subtab="original-gallery">Gallery</button>
+                <button class="sub-tab-btn" data-subtab="original-graph">Graph View</button>
+            </div>
+
+            <!-- Original Gallery -->
+            <div id="original-gallery" class="sub-tab-content active">
+                <div class="story-filters" data-universe="original">
+                    <button class="filter-btn active" data-story="all">All Stories</button>
+                    <button class="filter-btn" data-story="The Last Kingdom">The Last Kingdom</button>
+                    <button class="filter-btn" data-story="Starfall Chronicles">Starfall Chronicles</button>
+                    <button class="filter-btn" data-story="Mystic Harbor">Mystic Harbor</button>
+                </div>
+                <div class="gallery-grid" id="originalGrid"></div>
+            </div>
+
+            <!-- Original Graph -->
+            <div id="original-graph" class="sub-tab-content">
+                <div class="graph-controls">
+                    <button class="toggle-labels" data-universe="original">Toggle Labels</button>
+                    <button class="reset-graph" data-universe="original">Reset View</button>
+                    <span class="graph-hint">Drag to pan · Scroll to zoom</span>
+                </div>
+                <div class="graph-container" id="originalGraphContainer">
+                    <svg class="graph-svg" width="100%" height="100%"></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXISTING CHARACTERS TAB -->
+        <section id="existing-tab" class="tab-content">
+            <!-- Sub-navigation for Existing -->
+            <div class="sub-nav">
+                <button class="sub-tab-btn active" data-subtab="existing-gallery">Gallery</button>
+                <button class="sub-tab-btn" data-subtab="existing-graph">Graph View</button>
+            </div>
+
+            <!-- Existing Gallery -->
+            <div id="existing-gallery" class="sub-tab-content active">
+                <div class="story-filters" data-universe="existing">
+                    <button class="filter-btn active" data-story="all">All Universes</button>
+                    <button class="filter-btn" data-story="Marvel">Marvel</button>
+                    <button class="filter-btn" data-story="DC">DC</button>
+                    <button class="filter-btn" data-story="Anime">Anime</button>
+                </div>
+                <div class="gallery-grid" id="existingGrid"></div>
+            </div>
+
+            <!-- Existing Graph -->
+            <div id="existing-graph" class="sub-tab-content">
+                <div class="graph-controls">
+                    <button class="toggle-labels" data-universe="existing">Toggle Labels</button>
+                    <button class="reset-graph" data-universe="existing">Reset View</button>
+                    <span class="graph-hint">Drag to pan · Scroll to zoom</span>
+                </div>
+                <div class="graph-container" id="existingGraphContainer">
+                    <svg class="graph-svg" width="100%" height="100%"></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Detail Modal -->
+        <div class="modal" id="detailModal">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
