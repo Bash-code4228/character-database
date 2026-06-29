@@ -1,0 +1,453 @@
+/* ── Reset & Base ── */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d0d0f;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: radial-gradient(ellipse at 20% 50%, #1a1a2e, #0d0d0f 80%);
+}
+
+/* ── Header ── */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.app-header h1 {
+    font-weight: 300;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #f0e6d0, #b8a9c9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #8888aa;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.tab-btn:hover {
+    color: #ddd;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    background: rgba(180, 140, 220, 0.2);
+    color: #c8b0e8;
+    box-shadow: 0 0 20px rgba(180, 140, 220, 0.1);
+}
+
+/* ── Tab Content ── */
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow: hidden;
+    padding: 1.5rem 2rem 2rem;
+    flex-direction: column;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+/* ── Sub Navigation ── */
+.sub-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+}
+
+.sub-tab-btn {
+    background: transparent;
+    border: none;
+    color: #666688;
+    padding: 0.3rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.sub-tab-btn:hover {
+    color: #aaa;
+}
+
+.sub-tab-btn.active {
+    color: #c8b0e8;
+    background: rgba(180, 140, 220, 0.1);
+}
+
+.sub-tab-content {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sub-tab-content.active {
+    display: flex;
+}
+
+/* ── Gallery ── */
+.story-filters {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #9999bb;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ccc;
+}
+
+.filter-btn.active {
+    background: rgba(180, 140, 220, 0.15);
+    border-color: rgba(180, 140, 220, 0.3);
+    color: #d4c0ee;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    overflow-y: auto;
+    padding: 0.5rem 0.2rem 1rem;
+    flex: 1;
+    align-content: start;
+}
+
+/* ── Character Card ── */
+.character-card {
+    background: rgba(30, 30, 45, 0.7);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    padding: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.character-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    transition: opacity 0.4s;
+    z-index: 0;
+}
+
+.character-card:hover::before {
+    opacity: 0.3;
+}
+
+.character-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(180, 140, 220, 0.25);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.character-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.character-card .story-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a090b8;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.2rem 0.7rem;
+    border-radius: 12px;
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.character-card h3 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.2rem;
+    color: #f0ece6;
+}
+
+.character-card .role {
+    font-size: 0.85rem;
+    color: #a9a0b8;
+    margin-bottom: 0.7rem;
+}
+
+.character-card .card-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.character-card .card-actions button {
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    color: #bbbbdd;
+    padding: 0.3rem 0.9rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.character-card .card-actions button:hover {
+    background: rgba(180, 140, 220, 0.2);
+    border-color: rgba(180, 140, 220, 0.3);
+    color: #fff;
+}
+
+/* ── Graph View ── */
+.graph-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+}
+
+.graph-controls button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #bbbbdd;
+    padding: 0.3rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.graph-controls button:hover {
+    background: rgba(180, 140, 220, 0.15);
+    border-color: rgba(180, 140, 220, 0.3);
+}
+
+.graph-hint {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #666688;
+}
+
+.graph-container {
+    flex: 1;
+    background: rgba(10, 10, 18, 0.6);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+}
+
+.graph-container svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+.graph-container svg:active {
+    cursor: grabbing;
+}
+
+.graph-container svg text {
+    fill: #c8c0d8;
+    font-size: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    pointer-events: none;
+    user-select: none;
+}
+
+.graph-container svg .node-circle {
+    fill: #2a2a3e;
+    stroke: #6a5a8a;
+    stroke-width: 2px;
+    transition: r 0.2s;
+    cursor: pointer;
+}
+
+.graph-container svg .node-circle:hover {
+    stroke: #b090d0;
+    r: 22;
+}
+
+.graph-container svg .node-circle.central {
+    fill: #3a2a5a;
+    stroke: #a080c0;
+}
+
+.graph-container svg .edge-line {
+    stroke: #4a4a6a;
+    stroke-width: 1.5px;
+    opacity: 0.5;
+}
+
+.graph-container svg .edge-line.highlight {
+    opacity: 0.9;
+    stroke: #b090d0;
+}
+
+/* ── Modal ── */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #1a1a2a;
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    max-width: 520px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1.2rem;
+    font-size: 1.8rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #ddd;
+}
+
+.modal-content h2 {
+    font-weight: 300;
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+    color: #f0ece6;
+}
+
+.modal-content .modal-story {
+    font-size: 0.8rem;
+    color: #a090b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+}
+
+.modal-content .modal-role {
+    color: #b0a8c0;
+    margin-bottom: 1rem;
+}
+
+.modal-content .modal-desc {
+    line-height: 1.7;
+    color: #ccc8d8;
+    margin-bottom: 1.2rem;
+}
+
+.modal-content .modal-relations {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1rem;
+}
+
+.modal-content .modal-relations h4 {
+    font-weight: 400;
+    color: #a090b8;
+    margin-bottom: 0.3rem;
+}
+
+.modal-content .modal-relations span {
+    display: inline-block;
+    background: rgba(180, 140, 220, 0.1);
+    padding: 0.2rem 0.8rem;
+    border-radius: 12px;
+    margin: 0.2rem 0.3rem 0.2rem 0;
+    font-size: 0.85rem;
+    color: #c8b8e0;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #444466;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #666688;
+}
