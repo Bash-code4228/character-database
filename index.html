@@ -17,7 +17,9 @@
             </nav>
         </header>
 
+        <!-- ============================================ -->
         <!-- ORIGINAL LORE TAB -->
+        <!-- ============================================ -->
         <section id="original-tab" class="tab-content active">
             <!-- Sub-navigation for Original -->
             <div class="sub-nav">
@@ -33,6 +35,15 @@
                     <button class="filter-btn" data-story="Starfall Chronicles">Starfall Chronicles</button>
                     <button class="filter-btn" data-story="Mystic Harbor">Mystic Harbor</button>
                 </div>
+                
+                <!-- ✅ ADD THIS: Add Character button for Original Lore -->
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem; flex-shrink: 0;">
+                    <button class="add-character-btn" data-universe="original" style="background: rgba(180, 140, 220, 0.15); border: 1px solid rgba(180, 140, 220, 0.3); color: #c8b0e8; padding: 0.5rem 1.2rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                        ➕ Add Character
+                    </button>
+                </div>
+                <!-- ✅ END ADD -->
+
                 <div class="gallery-grid" id="originalGrid"></div>
             </div>
 
@@ -49,7 +60,9 @@
             </div>
         </section>
 
+        <!-- ============================================ -->
         <!-- EXISTING CHARACTERS TAB -->
+        <!-- ============================================ -->
         <section id="existing-tab" class="tab-content">
             <!-- Sub-navigation for Existing -->
             <div class="sub-nav">
@@ -65,6 +78,15 @@
                     <button class="filter-btn" data-story="DC">DC</button>
                     <button class="filter-btn" data-story="Anime">Anime</button>
                 </div>
+                
+                <!-- ✅ ADD THIS: Add Character button for Existing Characters -->
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem; flex-shrink: 0;">
+                    <button class="add-character-btn" data-universe="existing" style="background: rgba(180, 140, 220, 0.15); border: 1px solid rgba(180, 140, 220, 0.3); color: #c8b0e8; padding: 0.5rem 1.2rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                        ➕ Add Character
+                    </button>
+                </div>
+                <!-- ✅ END ADD -->
+
                 <div class="gallery-grid" id="existingGrid"></div>
             </div>
 
@@ -81,6 +103,10 @@
             </div>
         </section>
 
+        <!-- ============================================ -->
+        <!-- MODALS -->
+        <!-- ============================================ -->
+
         <!-- Character Detail Modal -->
         <div class="modal" id="detailModal">
             <div class="modal-content">
@@ -88,6 +114,55 @@
                 <div id="modalBody"></div>
             </div>
         </div>
+
+        <!-- ✅ ADD THIS: Add Character Modal -->
+        <div class="modal" id="addCharacterModal">
+            <div class="modal-content" style="max-width: 500px;">
+                <span class="modal-close add-modal-close">&times;</span>
+                <h2 style="margin-bottom: 0.5rem;">➕ Add New Character</h2>
+                <p style="color: #8888aa; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    Adding to: <span id="addUniverse" style="color: #c8b0e8;">Original Lore</span>
+                </p>
+                
+                <form id="addCharacterForm">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Name *</label>
+                        <input type="text" id="charName" required style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Role *</label>
+                        <input type="text" id="charRole" required style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Story/Universe *</label>
+                        <input type="text" id="charStory" required style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Description *</label>
+                        <textarea id="charDescription" required rows="3" style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Relationships (comma-separated IDs)</label>
+                        <input type="text" id="charRelationships" placeholder="e.g. tony, steve, natasha" style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; color: #aaa; margin-bottom: 0.3rem; font-size: 0.85rem;">Background Image URL</label>
+                        <input type="url" id="charBackground" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0e0; font-size: 0.95rem;">
+                    </div>
+                    
+                    <button type="submit" style="width: 100%; padding: 0.7rem; background: rgba(180, 140, 220, 0.2); border: 1px solid rgba(180, 140, 220, 0.3); border-radius: 12px; color: #c8b0e8; font-size: 1rem; cursor: pointer; transition: all 0.3s;">
+                        ✨ Add Character
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- ✅ END ADD -->
+
     </div>
 
     <script src="script.js"></script>
